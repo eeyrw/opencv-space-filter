@@ -48,6 +48,25 @@ def averageFilter(src,kernelSize):
             filteredImage[i,j]=np.mean(kernelPixels)
     return filteredImage
 
+def sharpenFilter(src):
+    kernel=[[-1,-1,-1],[-1,9,-1],[-1,-1,-1]] 
+    kernelSize=3
+    filteredImage=src.copy()  
+    height = src.shape[0]
+    weight = src.shape[1]
+    for i in range(1,height-1):
+        for j in range(1,weight-1):
+            pixelValue=0
+            for kernel_i in range(-kernelSize//2,kernelSize//2):
+                for kernel_j in range(-kernelSize//2,kernelSize//2):
+                    pixelValue=pixelValue+src[kernel_i+i,kernel_j+j]*(kernel[kernel_i+kernelSize//2][kernel_j+kernelSize//2])
+            if pixelValue<0:
+                pixelValue=0
+            if pixelValue>255:
+                pixelValue=255
+            filteredImage[i,j]=pixelValue
+    return filteredImage
+
 
 rawImage=cv2.imread('banana.jpg',flags=cv2.IMREAD_GRAYSCALE)
 cv2.imshow('Raw Image',rawImage)
@@ -63,5 +82,6 @@ filteredGaussNoiseImage=mediumFilter(gaussNoiseImage,3)
 cv2.imshow('Medium Filtered Gauss Noise Image',filteredGaussNoiseImage)
 filteredGaussNoiseImageAvg=averageFilter(gaussNoiseImage,3)
 cv2.imshow('Average Filtered Gauss&P Noise Image',filteredGaussNoiseImageAvg)
-
+filteredSharpenImage=sharpenFilter(rawImage)
+cv2.imshow('Sharpen Image',filteredSharpenImage)
 cv2.waitKey(0)
