@@ -24,36 +24,30 @@ def addGaussNoise(src,percetage):
 
 def mediumFilter(src,kernelSize):
     filteredImage=src.copy()  
+    windowRadius=kernelSize//2
     height = src.shape[0]
     weight = src.shape[1]
-    for i in range(1,height-1):
-        for j in range(1,weight-1):
-            kernelPixels=[]
-            for kernel_i in range(-kernelSize//2,kernelSize//2):
-                for kernel_j in range(-kernelSize//2,kernelSize//2):
-                    kernelPixels.append(src[kernel_i+i,kernel_j+j])
-            filteredImage[i,j]=np.median(kernelPixels)
+    for i in range(windowRadius,height-windowRadius):
+        for j in range(windowRadius,weight-windowRadius):
+            filteredImage[i,j]=np.median(src[i-windowRadius:i+windowRadius+1][:,j-windowRadius:j+windowRadius+1])
     return filteredImage
 
 def averageFilter(src,kernelSize):
     filteredImage=src.copy()  
+    windowRadius=kernelSize//2
     height = src.shape[0]
     weight = src.shape[1]
-    for i in range(1,height-1):
-        for j in range(1,weight-1):
-            kernelPixels=[]
-            for kernel_i in range(-kernelSize//2,kernelSize//2):
-                for kernel_j in range(-kernelSize//2,kernelSize//2):
-                    kernelPixels.append(src[kernel_i+i,kernel_j+j])
-            filteredImage[i,j]=np.mean(kernelPixels)
+    for i in range(windowRadius,height-windowRadius):
+        for j in range(windowRadius,weight-windowRadius):
+            filteredImage[i,j]=np.mean(src[i-windowRadius:i+windowRadius+1][:,j-windowRadius:j+windowRadius+1])
     return filteredImage
 
 
-rawImage=cv2.imread('banana.jpg',flags=cv2.IMREAD_GRAYSCALE)
+rawImage=cv2.imread('maple.jpg',flags=cv2.IMREAD_GRAYSCALE)
 cv2.imshow('Raw Image',rawImage)
-noiseImage=addSaltAndPepper(rawImage,0.1)
+noiseImage=addSaltAndPepper(rawImage,0.5)
 cv2.imshow('Salt and Pepper Noise Image',noiseImage)
-gaussNoiseImage=addGaussNoise(rawImage,0.1)
+gaussNoiseImage=addGaussNoise(rawImage,0.5)
 cv2.imshow('Gauss Noise Image',gaussNoiseImage)
 filteredImage=mediumFilter(noiseImage,3)
 cv2.imshow('Medium Filtered S&P Noise Image',filteredImage)
